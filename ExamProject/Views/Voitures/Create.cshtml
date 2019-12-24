@@ -1,0 +1,90 @@
+﻿@model ExamProject.Models.viewModel.CarViewModel
+
+@{
+    ViewData["Title"] = "create a car";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <script>
+    $(document).ready(function () {
+        var MakeDDL = $("#Marque");
+        var ModelDDL = $("#Model");
+        ModelDDL.prop('disabled', true);
+        MakeDDL.change(function () {
+            if ($(this).val() == "0") {
+                ModelDDL.prop('disabled', true);
+                ModelDDL.val("0");
+            }
+            else {
+                $.ajax({
+                    url: "/api/models/" +$(this).val(),
+                    method: "get",
+                    success: function (data) {
+                        ModelDDL.prop('disabled', false);
+                        ModelDDL.empty();
+                        ModelDDL.append($('<option/>', { value: '0', text: '--Select Model--' }));
+                        $(data).each(function (index, item) {
+                            ModelDDL.append($('<option/>', { value: item.id, text: item.nomModel }));
+                        });
+                    }
+                });
+            }
+        });
+    });
+    </script>
+<h1>Create</h1>
+
+<h4>Voiture</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Marques"></label>
+                <select asp-for="Voiture.MarqueID" asp-items="@(new SelectList(Model.Marques,"Id","NomMarque"))" class="form-control" id="Marque"></select>
+                <span asp-validation-for="Voiture.MarqueID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                    <label asp-for="Models"></label>
+                    <select asp-for="Voiture.ModelID" asp-items="@(new SelectList(Model.Models,"Id","NomModel"))" class="form-control" id="Model"></select>
+                    <span asp-validation-for="Voiture.ModelID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Voiture.PrixParJour" class="control-label"></label>
+                <input asp-for="Voiture.PrixParJour" class="form-control" />
+                <span asp-validation-for="Voiture.PrixParJour" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Voiture.Annee" class="control-label"></label>
+                <input asp-for="Voiture.Annee" class="form-control" />
+                <span asp-validation-for="Voiture.Annee" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Voiture.Kilometrage" class="control-label"></label>
+                <input asp-for="Voiture.Kilometrage" class="form-control" />
+                <span asp-validation-for="Voiture.Kilometrage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Voiture.Couleur" class="control-label"></label>
+                <input asp-for="Voiture.Couleur" class="form-control" />
+                <span asp-validation-for="Voiture.Couleur" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Voiture.ImagePath" class="control-label"></label>
+                <input type="file" asp-for="Voiture.ImagePath" class="form-control" />
+
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
